@@ -1,0 +1,58 @@
+eleves:
+    Pierre:
+        ecoles:
+            n7
+            mine
+            inp
+            insa
+    Clement:
+        ecoles:
+            inp
+            insa
+            n7
+            mine
+    Philippe:
+        ecoles:
+            n7
+            mine
+            inp
+            insa
+    Cedric:
+        ecoles:
+            n7
+            insa
+            mine
+            inp
+
+            
+
+ecoles:
+    n7:
+        capacite: 1
+        eleves:
+            Pierre
+            Clement
+            Philippe
+            Cedric
+    inp:
+        capacite: 1
+        eleves:
+            Cedric
+            Clement
+            Philippe
+            Pierre
+    insa:
+        capacite: 1
+        eleves:
+            Cedric
+            Pierre
+            Philippe
+            Clement
+    mine:
+        capacite: 1
+        eleves:
+            Philippe
+            Clement
+            Pierre
+            Cedric
+            

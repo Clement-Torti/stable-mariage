@@ -1,89 +1,122 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
+import yaml
 
-# Stable marriage algorithm
-Eleves = {
-    "Pierre": 
-        ["n7", "mine", "inp", "insa"], 
-    "Clement": 
-        ["inp", "insa", "n7", "mine"],
-    "Philippe": 
-        ["n7", "mine", "inp", "insa"],
-    "Cedric": 
-        ["n7", "insa", "mine", "inp"],
-        
-}
 
-Ecoles = {
-    "n7": 
-        ["Pierre", "Clement", "Philippe", "Cedric"],
-    "inp": 
-        ["Cedric", "Clement", "Philippe", "Pierre"],
-    "insa": 
-        ["Cedric", "Pierre", "Philippe", "Clement"],
-    "mine": 
-        ["Philippe", "Clement", "Pierre", "Cedric"]
-}
+# Lecture des données 
+def getInput():
+    Eleves = {
+        "Pierre": 
+            ["n7", "mine", "inp", "insa"], 
+        "Clement": 
+            ["inp", "insa", "n7", "mine"],
+        "Philippe": 
+            ["n7", "mine", "inp", "insa"],
+        "Cedric": 
+            ["n7", "insa", "mine", "inp"],
+    }
 
-EcolesCourante = {
-    "n7": 
-        [],
-    "inp": 
-        [],
-    "insa": 
-        [],
-    "mine": 
-        []
-}
+    Ecoles = {
+        "n7": 
+            ["Pierre", "Clement", "Philippe", "Cedric"],
+        "inp": 
+            ["Cedric", "Clement", "Philippe", "Pierre"],
+        "insa": 
+            ["Cedric", "Pierre", "Philippe", "Clement"],
+        "mine": 
+            ["Philippe", "Clement", "Pierre", "Cedric"]
+    }
 
-ElevesIsoles = []
+    # Mise a jour progressivement durant l algorithme
+    EcolesCourante = {
+        "n7": 
+            [],
+        "inp": 
+            [],
+        "insa": 
+            [],
+        "mine": 
+            []
+    }
 
-# lancer l'algorithme
-isFinish = False
+    return Eleves, Ecoles, EcolesCourante
 
-while (not isFinish):
-    ElevesIsoles = []
+# Getting input data from data.yaml
+def readInput():
+    with open("data.yaml", 'r') as stream:
+        try:
+            data = yaml.safe_load(stream)
 
-    # Les eleves choisisent leur ecole preferee
-    for eleve, choix in Eleves.items():
-        if choix:
-            c = choix[0]
-            choix.pop(0)
+            # Parsage des eleves
+            Eleves = {}
+            for eleve, donneeEleve in data["eleves"].items():
+                Eleves[eleve] = donneeEleve["ecoles"].split()
 
-            EcolesCourante[c].append(eleve)
-    
-    # Detection de conflit
-    for ecole, elevesAChoisir in EcolesCourante.items():
-        if len(elevesAChoisir) > 1:
-            # Choix du preferer
-            for eleve in Ecoles[ecole]:
-                if eleve in elevesAChoisir:
-                    elevesAChoisir.remove(eleve)
-                    break
-                
-            # Rajout des eleves isoles
-            for eleveIsole in elevesAChoisir:
-                ElevesIsoles.append(eleveIsole)
-    
-    # Critere d'arret Tous les eleves ont ete place
-    if not ElevesIsoles:
-        isFinish = True
+            # Parsage des ecoles
+            Ecoles = {}
+            EcolesCourante = {}
+            for ecole, donneeEcole in data["ecoles"].items():
+                Ecoles[ecole] = donneeEcole["eleves"].split()
+                EcolesCourante[ecole] = []
+            
+            return Eleves, Ecoles, EcolesCourante
+        except yaml.YAMLError as exc:
+            print(exc)
 
-    # Les eleves isoles choisisent leur nouvelle preference
+
+# Place les eleves isoles dans leurs ecoles favorites
+def placerElevesIsoles(Eleves, ElevesIsoles, EcolesCourante):
     for eleve in ElevesIsoles:
-        if Eleves[eleve]:
-            c = Eleves[eleve][0]
-            Eleves[eleve].pop(0)
+            if Eleves[eleve]:
+                # Choix de sont ecoles favorites qui ne l'a pas refuse
+                c = Eleves[eleve][0]
+                Eleves[eleve].pop(0)
 
-            EcolesCourante[c].append(eleve)
-    
-
-    
+                EcolesCourante[c].append(eleve)
 
 
-# afficher le resultat
-print EcolesCourante
+# Choix de l'eleve favorie parmis une liste d'eleve a choisir
+def eleveFavorie(elevesAChoisir, listePreference):
+    for eleve in listePreference:
+        if eleve in elevesAChoisir:
+            return eleve
 
-# Matching 1 a 1
+
+def stableMariage():
+    Eleves, Ecoles, EcolesCourante = readInput()
+
+    # Tous les eleves sont isoles au debut
+    ElevesIsoles = Eleves.keys()
+
+    # Tant qu'il y a des eleves sans ecole
+    while (ElevesIsoles):
+        # Placer tous les eleves sans ecole
+        placerElevesIsoles(Eleves, ElevesIsoles, EcolesCourante)
+
+        # Reset des eleves isoles
+        ElevesIsoles = []
+        
+        # On parcours les ecoles (ecoles) et leurs etudiants (elevesAChoisir)
+        for ecole, elevesAChoisir in EcolesCourante.items():
+            # Conflit. Trop d'eleve pour une ecole, lesquels prends on ?
+            if len(elevesAChoisir) > 1:
+                # On conserve l'eleve favorie
+                choixEleve = eleveFavorie(elevesAChoisir, Ecoles[ecole])
+                    
+                # On supprime les autres qui redeviennent isoles
+                for eleveIsole in elevesAChoisir:
+                    if eleveIsole != choixEleve:
+                        EcolesCourante[ecole].remove(eleveIsole)
+                        ElevesIsoles.append(eleveIsole)
+        
+
+
+    return EcolesCourante
+
+
+print stableMariage()
+
 
 # Matching ecole a capacsite egale
 
