@@ -2,57 +2,88 @@ eleves:
     Pierre:
         ecoles:
             n7
-            mine
             inp
+            mine
             insa
     Clement:
         ecoles:
-            inp
-            insa
             n7
+            insa
+            inp
             mine
     Philippe:
         ecoles:
             n7
             mine
-            inp
             insa
+            inp
     Cedric:
         ecoles:
             n7
             insa
             mine
             inp
+    Simon:
+        ecoles:
+            inp
+            n7
+            mine
+            insa
+    Guillaume:
+        ecoles:
+            insa
+            mine
+            n7
+            inp
+    Elias:
+        ecoles:
+            n7
+            mine
+            inp
+            insa
 
             
 
 ecoles:
     n7:
-        capacite: 1
+        capacite: 2
         eleves:
-            Pierre
-            Clement
-            Philippe
             Cedric
+            Elias
+            Pierre
+            Guillaume
+            Philippe
+            Clement
+            Simon
     inp:
-        capacite: 1
+        capacite: 2
         eleves:
+            Philippe
+            Guillaume
+            Simon
             Cedric
             Clement
-            Philippe
             Pierre
+            Elias
     insa:
-        capacite: 1
+        capacite: 2
         eleves:
-            Cedric
+            Guillaume
             Pierre
-            Philippe
             Clement
+            Philippe
+            Simon
+            Cedric
+            Elias
     mine:
-        capacite: 1
+        capacite: 2
         eleves:
-            Philippe
             Clement
-            Pierre
+            Simon
+            Elias
             Cedric
+            Philippe
+            Guillaume
+            Pierre
+            
             

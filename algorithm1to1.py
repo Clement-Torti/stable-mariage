@@ -2,6 +2,8 @@
 
 import numpy as np
 import yaml
+import random
+import sys
 
 
 # Lecture des données 
@@ -50,17 +52,22 @@ def readInput():
 
             # Parsage des eleves
             Eleves = {}
+            
             for eleve, donneeEleve in data["eleves"].items():
                 Eleves[eleve] = donneeEleve["ecoles"].split()
+                #random.shuffle(Eleves[eleve])
+                
 
             # Parsage des ecoles
             Ecoles = {}
             EcolesCourante = {}
+            CapaciteEcoles = {}
             for ecole, donneeEcole in data["ecoles"].items():
                 Ecoles[ecole] = donneeEcole["eleves"].split()
-                EcolesCourante[ecole] = []
+                CapaciteEcoles[ecole] = donneeEcole["capacite"]
+                #random.shuffle(Ecoles[ecole])
             
-            return Eleves, Ecoles, EcolesCourante
+            return Eleves, Ecoles, EcolesCourante, CapaciteEcoles
         except yaml.YAMLError as exc:
             print(exc)
 
@@ -73,18 +80,28 @@ def placerElevesIsoles(Eleves, ElevesIsoles, EcolesCourante):
                 c = Eleves[eleve][0]
                 Eleves[eleve].pop(0)
 
+                if not EcolesCourante.has_key(c):
+                    EcolesCourante[c] = []
+
                 EcolesCourante[c].append(eleve)
 
 
 # Choix de l'eleve favorie parmis une liste d'eleve a choisir
-def eleveFavorie(elevesAChoisir, listePreference):
+def eleveFavorie(elevesAChoisir, listePreference, capacite):
+    choixEleves = []
+
     for eleve in listePreference:
         if eleve in elevesAChoisir:
-            return eleve
+            choixEleves.append(eleve)
+            if len(choixEleves) >= capacite:
+                return choixEleves
+
+    return choixEleves
 
 
-def stableMariage():
-    Eleves, Ecoles, EcolesCourante = readInput()
+def stableMariageEleves():
+    Eleves, Ecoles, EcolesCourante, CapaciteEcoles = readInput()
+
 
     # Tous les eleves sont isoles au debut
     ElevesIsoles = Eleves.keys()
@@ -99,25 +116,92 @@ def stableMariage():
         
         # On parcours les ecoles (ecoles) et leurs etudiants (elevesAChoisir)
         for ecole, elevesAChoisir in EcolesCourante.items():
-            # Conflit. Trop d'eleve pour une ecole, lesquels prends on ?
+            # Conflit. Trop d'eleve pour une ecole
             if len(elevesAChoisir) > 1:
                 # On conserve l'eleve favorie
-                choixEleve = eleveFavorie(elevesAChoisir, Ecoles[ecole])
+                choixEleves = eleveFavorie(elevesAChoisir, Ecoles[ecole], CapaciteEcoles[ecole])
                     
                 # On supprime les autres qui redeviennent isoles
                 for eleveIsole in elevesAChoisir:
-                    if eleveIsole != choixEleve:
+                    if not (eleveIsole in choixEleves):
                         EcolesCourante[ecole].remove(eleveIsole)
                         ElevesIsoles.append(eleveIsole)
         
 
-
     return EcolesCourante
 
 
-print stableMariage()
+def contacterElevesFavories(Ecoles, EcolesIsoles, ElevesCourants, CapaciteEcoles):
+    for ecole in EcolesIsoles:
+        capacite = CapaciteEcoles[ecole]
 
 
-# Matching ecole a capacsite egale
+        minCap = min(capacite, len(Ecoles[ecole]))
 
-# Matchning capacite multiple
+        for i in range(0, minCap):
+            c = Ecoles[ecole][0]
+            Ecoles[ecole].pop(0)
+
+            if not ElevesCourants.has_key(c):
+                ElevesCourants[c] = []
+            
+            ElevesCourants[c].append(ecole)
+    
+            
+def ecoleFavorite(ecolesAChoisir, listePreference):
+    for ecole in ecolesAChoisir:
+        if ecole in listePreference:
+            return ecole
+
+
+def stableMariageEcoles():
+    termine = False
+
+    # Lire les donnees
+    Eleves, Ecoles, ElevesCourants, CapaciteEcoles = readInput()
+
+    # Tous les eleves sont isoles au debut
+    EcolesIsoles = Ecoles.keys()
+
+    # Critere d'arret: Une ecole n'a plus d'eleve a contacter
+    while not termine:
+        # Une ecole va contacter ses "capacite" eleves favoris
+        contacterElevesFavories(Ecoles, EcolesIsoles, ElevesCourants, CapaciteEcoles)
+
+        EcolesIsoles = []
+
+        # Les eleves choisissent leur ecole favorite
+        for eleve, ecolesAChoisir in ElevesCourants.items():
+            c = ecoleFavorite(ecolesAChoisir, Eleves[eleve])
+
+            # Virer les autres des ecolesAChoisir
+            if len(ecolesAChoisir) > 1:
+                for ecole in ecolesAChoisir:
+                    if ecole != c:
+                        ElevesCourants[eleve].remove(ecole)
+                        # Mettre l'ecole dans ecole isole
+                        EcolesIsoles.append(ecole)
+
+        # Calcul du critere d'arret
+        termine = True
+        for ecole in EcolesIsoles:
+            if ecole:
+                termine = False
+
+    # Afficher resultat
+    return ElevesCourants
+
+
+
+def main():
+    swap = False
+    if len(sys.argv) > 0:
+        swap = sys.argv[1] == "1"
+
+    if swap:
+        print stableMariageEcoles()
+    else:
+        print stableMariageEleves()
+    
+
+main()
