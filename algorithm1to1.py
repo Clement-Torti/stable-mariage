@@ -62,7 +62,10 @@ def serenadeStudents(schools, schoolsNotMarried, schoolsCapacties, stableMatch):
         for stableChoice in stableChoices:
             if stableChoice not in stableMatch:
                 stableMatch[stableChoice] = []
-                stableMatch[stableChoice].append(school)
+            stableMatch[stableChoice].append(school)
+
+        # Remettre la liste des choix stable à 0 pour la prochaine école
+        stableChoices.clear()
 
 
 # Choix de(s) élève(s) favori parmis une liste d'eleve a choisir
