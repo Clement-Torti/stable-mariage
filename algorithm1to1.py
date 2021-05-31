@@ -35,36 +35,37 @@ def readInput():
             print(exc)
 
 
-# Toutes les écoles vont se proposer à leur n élèves préférés
-def serenading(serenades, serenadesNotMarried, serenadesCapacities, stableMatch):
+# Tous les serenades vont se proposer à leur n serenaded préférés
+def serenading(allSerenades, serenadesNotMarried, serenadesCapacities, stableMatch):
 
     stableChoices = []
 
-    for serenade in serenadesNotMarried:
-        # Eleve(s) favori qui ne l'a pas refuse
-        for i in range(serenadesCapacities[serenade]):
-            # Traiter le cas où capacite > nombre d'élève restant
-            if (i < len(serenades[serenade])):
-                stableChoices.append(serenades[serenade][0])
-                serenades[serenade].pop(0)
+    for serenades in serenadesNotMarried:
+        # Serenaded favori(s) qui ne l'a pas refuse
+        for i in range(serenadesCapacities[serenades]):
+            # Traiter le cas où capacite > nombre de serenaded restant
+            if (i < len(allSerenades[serenades])):
+                stableChoices.append(allSerenades[serenades][0])
+                allSerenades[serenades].pop(0)
 
         for stableChoice in stableChoices:
             if stableChoice not in stableMatch:
                 stableMatch[stableChoice] = []
-            stableMatch[stableChoice].append(serenade)
+            stableMatch[stableChoice].append(serenades)
 
-        # Remettre la liste des choix stable à 0 pour la prochaine école
+        # Remettre la liste des choix stable à 0 pour le prochain serenades
         stableChoices.clear()
 
 
-# Choix de(s) élève(s) favori parmis une liste d'eleve a choisir
+# Choix de(s) serenade(s) favori parmis la liste de préférence du serenaded
 def getStableChoices(serenadesToChoose, ranking, serenadedCapacity):
 
     stableChoices = []
 
-    for serenade in ranking:
-        if serenade in serenadesToChoose:
-            stableChoices.append(serenade)
+    for serenades in ranking:
+        if serenades in serenadesToChoose:
+            stableChoices.append(serenades)
+            # Un serenaded ne peut pas choisir plus de serenades que sa capacitié
             if len(stableChoices) >= serenadedCapacity:
                 return stableChoices
 
@@ -75,10 +76,10 @@ def stableMariageAlgorithm(swap):
 
     if not swap:
         # students, schools, studentsCapacities, schoolsCapacities
-        serenades, serenaded, serenadesCapacities, serenadedCapacities = readInput()
+        allSerenades, allSerenaded, serenadesCapacities, serenadedCapacities = readInput()
     else:
         # schools, students, schoolsCapacities, studentsCapacities
-        serenaded, serenades, serenadedCapacities, serenadesCapacities = readInput()
+        allSerenaded, allSerenades, serenadedCapacities, serenadesCapacities = readInput()
 
     # Nombre d'itération de l'algorithme
     rounds = 0
@@ -86,29 +87,29 @@ def stableMariageAlgorithm(swap):
     # Resultat final de l'algorithme
     stableMatch = {}
 
-    # Tous les eleves sont isoles au debut
-    serenadesNotMarried = serenades.keys()
+    # Tous les serenades sont isoles au debut
+    serenadesNotMarried = allSerenades.keys()
 
-    # Tant qu'il y a des eleves sans ecole
+    # Tant qu'il y a des serenades tout seul
     while (serenadesNotMarried):
-        # Placer tous les eleves dans leur ecole préférée
-        serenading(serenades, serenadesNotMarried, serenadesCapacities, stableMatch)
+        # Placer tous les serenades vers leur serenaded préféré
+        serenading(allSerenades, serenadesNotMarried, serenadesCapacities, stableMatch)
 
-        # Les élèves ont été placés
+        # Les serenades ont été placés
         serenadesNotMarried = []
         
-        # On parcours chaque école pour traiter les élèves attribués
-        for serenadedKey, serenadesToChoose in stableMatch.items():
-            # Si il y a plusieurs élèves pour une école
+        # On parcours chaque serenaded pour traiter les serenades attribués
+        for serenaded, serenadesToChoose in stableMatch.items():
+            # Si il y a plusieurs serenades pour une serenaded
             if len(serenadesToChoose) > 1:
-                # On conserve les n élèves favoris
-                stableChoices = getStableChoices(serenadesToChoose, serenaded[serenadedKey], serenadedCapacities[serenadedKey])
+                # On conserve les n serenades favoris
+                stableChoices = getStableChoices(serenadesToChoose, allSerenaded[serenaded], serenadedCapacities[serenaded])
                     
-                # On doit redistribuer les élèves qui n'ont pas été choisi
-                for serenade in serenadesToChoose:
-                    if serenade not in stableChoices:
-                        stableMatch[serenadedKey].remove(serenade)
-                        serenadesNotMarried.append(serenade)
+                # On doit redistribuer les serenades qui n'ont pas été choisi
+                for serenades in serenadesToChoose:
+                    if serenades not in stableChoices:
+                        stableMatch[serenaded].remove(serenades)
+                        serenadesNotMarried.append(serenades)
         rounds += 1
         
 
