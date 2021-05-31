@@ -4,6 +4,8 @@ import numpy as np
 import yaml
 import random
 import sys
+from prettytable import PrettyTable
+
 
 
 # Getting input data from data.yaml
@@ -71,6 +73,18 @@ def getStableChoices(serenadesToChoose, ranking, serenadedCapacity):
 
     return stableChoices
 
+# Retourne une ligne du tableau des stableMatching
+def getStableMatchingRow(allSerenaded, stableMatch):
+    row = []
+
+    for serenaded in allSerenaded.keys():
+        if serenaded in stableMatch:
+            row.append(' '.join(stableMatch[serenaded]))
+        else:
+            row.append('X')    
+
+    return row
+
 
 def stableMariageAlgorithm(swap):
 
@@ -80,6 +94,9 @@ def stableMariageAlgorithm(swap):
     else:
         # schools, students, schoolsCapacities, studentsCapacities
         allSerenaded, allSerenades, serenadedCapacities, serenadesCapacities = readInput()
+
+    # Affichage de la première ligne
+    stableMatchingtable = PrettyTable(allSerenaded.keys())
 
     # Nombre d'itération de l'algorithme
     rounds = 0
@@ -98,23 +115,27 @@ def stableMariageAlgorithm(swap):
         # Les serenades ont été placés
         serenadesNotMarried = []
         
+        # Affichage de l'étape en cours
+        row = getStableMatchingRow(allSerenaded, stableMatch)    
+        stableMatchingtable.add_row(row)
+
         # On parcours chaque serenaded pour traiter les serenades attribués
         for serenaded, serenadesToChoose in stableMatch.items():
             # Si il y a plusieurs serenades pour une serenaded
             if len(serenadesToChoose) > 1:
                 # On conserve les n serenades favoris
                 stableChoices = getStableChoices(serenadesToChoose, allSerenaded[serenaded], serenadedCapacities[serenaded])
-                    
+
                 # On doit redistribuer les serenades qui n'ont pas été choisi
                 for serenades in serenadesToChoose:
                     if serenades not in stableChoices:
                         stableMatch[serenaded].remove(serenades)
                         serenadesNotMarried.append(serenades)
         rounds += 1
-        
 
-    print(stableMatch)
-    print(rounds)
+ 
+    print(stableMatchingtable)
+
 
 
 def main():
