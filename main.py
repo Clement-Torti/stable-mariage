@@ -153,7 +153,9 @@ def stableMariageAlgorithm(swap):
                 stableChoices = getStableChoices(serenadesToChoose, allSerenaded[serenaded], serenadedCapacities[serenaded])
 
                 # On doit redistribuer les serenades qui n'ont pas été choisi
-                for serenades in serenadesToChoose:
+                serenadesToChooseCopy = serenadesToChoose.copy()
+
+                for serenades in serenadesToChooseCopy:
                     if serenades not in stableChoices:
                         stableMatch[serenaded].remove(serenades)
                         serenadesNotMarried.append(serenades)
