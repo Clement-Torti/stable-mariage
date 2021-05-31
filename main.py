@@ -74,10 +74,10 @@ def getStableChoices(serenadesToChoose, ranking, seneradedCapacity):
     return stableChoices
 
 # Retourne une ligne du tableau des stableMatching
-def getStableMatchingRow(allseneraded, stableMatch):
+def getStableMatchingRow(allSerenaded, stableMatch):
     row = []
 
-    for seneraded in allseneraded.keys():
+    for seneraded in allSerenaded.keys():
         if seneraded in stableMatch:
             row.append(' '.join(stableMatch[seneraded]))
         else:
@@ -86,7 +86,7 @@ def getStableMatchingRow(allseneraded, stableMatch):
     return row
 
 # Afficher les entrées de l'algorithm
-def showInput(allSerenades, allseneraded, serenadesCapacities, seneradedCapacities):
+def showInput(allSerenades, allSerenaded, serenadesCapacities, seneradedCapacities):
     print("Inputs:")
 
     firstLigne = list(allSerenades.keys())
@@ -94,9 +94,9 @@ def showInput(allSerenades, allseneraded, serenadesCapacities, seneradedCapaciti
     inputTable = PrettyTable(firstLigne)
 
     allSerenadesKeys = list(allSerenades.keys())
-    allseneradedKeys = list(allseneraded.keys())
+    allSerenadedKeys = list(allSerenaded.keys())
 
-    for seneraded, senerades in allseneraded.items():
+    for seneraded, senerades in allSerenaded.items():
         row = [seneraded]
 
         for senerade in allSerenadesKeys:
@@ -115,14 +115,14 @@ def stableMariageAlgorithm(swap):
 
     if not swap:
         # students, schools, studentsCapacities, schoolsCapacities
-        allSerenades, allseneraded, serenadesCapacities, seneradedCapacities = readInput()
+        allSerenades, allSerenaded, serenadesCapacities, seneradedCapacities = readInput()
     else:
         # schools, students, schoolsCapacities, studentsCapacities
-        allseneraded, allSerenades, seneradedCapacities, serenadesCapacities = readInput()
+        allSerenaded, allSerenades, seneradedCapacities, serenadesCapacities = readInput()
 
     # Affichage des entrées et de la première ligne
-    showInput(allSerenades, allseneraded, serenadesCapacities, seneradedCapacities)
-    stableMatchingtable = PrettyTable(allseneraded.keys())
+    showInput(allSerenades, allSerenaded, serenadesCapacities, seneradedCapacities)
+    stableMatchingtable = PrettyTable(allSerenaded.keys())
 
     # Nombre d'itération de l'algorithme
     rounds = 0
@@ -142,7 +142,7 @@ def stableMariageAlgorithm(swap):
         serenadesNotMarried = []
         
         # Affichage de l'étape en cours
-        row = getStableMatchingRow(allseneraded, stableMatch)    
+        row = getStableMatchingRow(allSerenaded, stableMatch)    
         stableMatchingtable.add_row(row)
 
         # On parcours chaque seneraded pour traiter les serenades attribués
@@ -150,7 +150,7 @@ def stableMariageAlgorithm(swap):
             # Si il y a plusieurs serenades pour une seneraded
             if len(serenadesToChoose) > 1:
                 # On conserve les n serenades favoris
-                stableChoices = getStableChoices(serenadesToChoose, allseneraded[seneraded], seneradedCapacities[seneraded])
+                stableChoices = getStableChoices(serenadesToChoose, allSerenaded[seneraded], seneradedCapacities[seneraded])
 
                 # On doit redistribuer les serenades qui n'ont pas été choisi
                 for serenades in serenadesToChoose:
