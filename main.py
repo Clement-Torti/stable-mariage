@@ -152,9 +152,6 @@ def stableMariageAlgorithm(swap):
                 # On conserve les n serenades favoris
                 stableChoices = getStableChoices(serenadesToChoose, allSerenaded[serenaded], serenadedCapacities[serenaded])
 
-                if (serenaded == "n7"): 
-                    print(stableChoices) 
-
                 # On doit redistribuer les serenades qui n'ont pas été choisi
                 for serenades in serenadesToChoose:
                     if serenades not in stableChoices:
