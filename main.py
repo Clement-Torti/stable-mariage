@@ -45,11 +45,11 @@ def serenading(allSerenades, serenadesNotMarried, serenadesCapacities, stableMat
     for serenades in serenadesNotMarried:
         # serenaded favori(s) qui ne l'a pas refuse
         for i in range(serenadesCapacities[serenades]):
-            # Traiter le cas où capacite > nombre de serenaded restant
-            if (i < len(allSerenades[serenades])):
+            # Traiter le cas où il ne reste plus de serenaded
+            if (len(allSerenades[serenades])> 0):
                 stableChoices.append(allSerenades[serenades][0])
                 allSerenades[serenades].pop(0)
-
+        # ?
         for stableChoice in stableChoices:
             if stableChoice not in stableMatch:
                 stableMatch[stableChoice] = []
@@ -73,7 +73,7 @@ def getStableChoices(serenadesToChoose, ranking, serenadedCapacity):
 
     return stableChoices
 
-# Retourne une ligne du tableau des stableMatching
+# Retourne une ligne du tableau des stableMatching (pour l'affichage)
 def getStableMatchingRow(allSerenaded, stableMatch):
     row = []
 
@@ -85,7 +85,7 @@ def getStableMatchingRow(allSerenaded, stableMatch):
 
     return row
 
-# Afficher les entrées de l'algorithm
+# Afficher les entrées de l'algorithm (pour l'affichage)
 def showInput(allSerenades, allSerenaded, serenadesCapacities, serenadedCapacities):
     print("Inputs:")
 
@@ -164,7 +164,6 @@ def stableMariageAlgorithm(swap):
     
     print("\nResult (" + str(rounds) + " rounds):")
     print(stableMatchingtable)
-
 
 
 def main():
